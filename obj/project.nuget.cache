@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "cYBNPIwgU7YQ34QQwHFARscogK8rTosSE0Dv9SKph5vgmnQhnUk7cqDmwO38wU6ILL0FHJE8y9u6cG/XvGJXNA==",
+  "success": true,
+  "projectFilePath": "D:\\Programming\\Apps\\Wikisplorer\\Wikisplorer.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\OEM\\.nuget\\packages\\htmlagilitypack\\1.11.72\\htmlagilitypack.1.11.72.nupkg.sha512"
+  ],
+  "logs": []
+}
