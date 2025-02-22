@@ -1,1 +1,1 @@
-Winform app that scrapes wikipedi articles
+Winform app that scrapes Wikipedia articles
