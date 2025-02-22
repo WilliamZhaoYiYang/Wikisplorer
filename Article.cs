@@ -95,10 +95,10 @@ namespace Wikisplorer
                 foreach (var anchor in anchorTags)
                 {
                     // Decode HTML entities in the anchor title and text
-                    string linkTitle = HtmlAgilityPack.HtmlEntity.DeEntitize(anchor.GetAttributeValue("title", "null")).ToLower();
+                    string linkTitle = HtmlAgilityPack.HtmlEntity.DeEntitize(anchor.GetAttributeValue("title", "null"));
                     string linkText = HtmlAgilityPack.HtmlEntity.DeEntitize(anchor.InnerText).ToLower();
 
-                    int titleCount = Regex.Matches(fullText, Regex.Escape(linkTitle)).Count;
+                    int titleCount = Regex.Matches(fullText, Regex.Escape(linkTitle.ToLower())).Count;
                     // int textCount = Regex.Matches(fullText, Regex.Escape(linkText)).Count;
 
                     // Check if the key already exists

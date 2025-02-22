@@ -2,6 +2,8 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using Button = System.Windows.Forms.Button;
 
 namespace Wikisplorer
 {
@@ -17,37 +19,73 @@ namespace Wikisplorer
             lastArticle = LastArticle;
 
             InitializeComponent();
-            InitializePanelWithButtons();
+            InitializeButtons();
+
+            panel1.Paint += Panel1_Paint;
         }
 
-        private void InitializePanelWithButtons()
+        private void InitializeButtons()
         {
-            // Add multiple buttons, some off-screen
-            //for (int i = 0; i < 15; i++)
-            //{
-            //    Button button = new Button
-            //    {
-            //        Text = "Button " + (i + 1),
-            //        Size = new Size(100, 30),
-            //        Location = new Point(i * 50, i * 50) // Some buttons will be off-screen
-            //    };
-            //    panel1.Controls.Add(button);
-            //}
+            // Create buttons based on the number of articles scraped
             int i = 1;
 
             foreach (Article article in wiki.ArticlesList)
             {
                 Button button = new Button
                 {
+                    Name = article.Title,
                     Text = article.Title,
                     Size = new Size(75, 75),
                     Location = new Point(rand.Next(50, 101) * i, rand.Next(50, 101) * i),
                     BackColor = SystemColors.ButtonHighlight
                 };
-                Console.WriteLine(button.Location);
                 panel1.Controls.Add(button);
 
                 i += 2;
+            }
+
+            Console.WriteLine("Buttons added");
+        }
+
+        private void Panel1_Paint(object? sender, PaintEventArgs e)
+        {
+            DrawLineBetweenButtons(e.Graphics);
+        }
+
+        private void DrawLineBetweenButtons(Graphics g)
+        {
+            Console.WriteLine("Painting");
+            Dictionary<string, Button> articleButtons = new Dictionary<string, Button>();
+
+            // Store buttons in a dictionary for quick lookup
+            foreach (Control control in panel1.Controls)
+            {
+                if (control is Button button)
+                {
+                    articleButtons[button.Name] = button; // Article title as the key
+                }
+            }
+
+
+            // Find all links between articles
+            foreach (Article article in wiki.ArticlesList)
+            {
+                Button fromButton = articleButtons[article.Title]; // The source button
+
+                foreach (KeyValuePair<string, int> link in article.AnchorsCount)
+                {
+                    
+                    // Linked article exists in our dictionary of scraped articles
+                    if (articleButtons.TryGetValue(link.Key, out Button? toButton))
+                    {
+                        Console.WriteLine($"{article.Title}, {link.Key}");
+                        // Get the center positions of both buttons
+                        Point fromPoint = new Point(fromButton.Left + fromButton.Width / 2, fromButton.Top + fromButton.Height / 2);
+                        Point toPoint = new Point(toButton.Left + toButton.Width / 2, toButton.Top + toButton.Height / 2);
+
+                        g.DrawLine(Pens.Black, fromPoint, toPoint);
+                    }
+                }
             }
         }
 

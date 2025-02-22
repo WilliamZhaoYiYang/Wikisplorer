@@ -20,3 +20,4 @@ D:\Programming\Apps\Wikisplorer\obj\Debug\net8.0-windows\Wikisplorer.csproj.Copy
 D:\Programming\Apps\Wikisplorer\obj\Debug\net8.0-windows\Wikisplorer.LoadingForm.resources
 D:\Programming\Apps\Wikisplorer\obj\Debug\net8.0-windows\Wikisplorer.Properties.Resources.resources
 D:\Programming\Apps\Wikisplorer\obj\Debug\net8.0-windows\Wikisplorer.Map.resources
+D:\Programming\Apps\Wikisplorer\obj\Debug\net8.0-windows\Wikisplorer.sourcelink.json
