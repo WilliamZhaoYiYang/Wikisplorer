@@ -5,13 +5,14 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
+using HtmlNode = HtmlAgilityPack.HtmlNode;
 
 namespace Wikisplorer
 {
     public class Article
     {
         private string title;
-        private HtmlAgilityPack.HtmlNode content;
+        private HtmlNode content;
         private string link;
         // private List<HtmlAgilityPack.HtmlNode> paragraphs;
         private string fullText;

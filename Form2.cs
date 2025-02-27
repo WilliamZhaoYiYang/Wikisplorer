@@ -12,36 +12,64 @@ namespace Wikisplorer
         private WWScraper wiki;
         private Article lastArticle;
         private Random rand = new Random();
+        private Dictionary<Button, List<Button>> linkedArticles;
+        Dictionary<string, Button> articleButtons;   // Store buttons in a dictionary for quick lookup
 
         public Map(WWScraper Wiki, Article LastArticle)
         {
             wiki = Wiki;
             lastArticle = LastArticle;
+            linkedArticles = new Dictionary<Button, List<Button>>();
+            articleButtons = new Dictionary<string, Button>();
 
             InitializeComponent();
             InitializeButtons();
+            FillLinkedArticles();
 
             panel1.Paint += Panel1_Paint;
         }
 
         private void InitializeButtons()
         {
-            // Create buttons based on the number of articles scraped
-            int i = 1;
+            int buttonSize = 75;
+            int padding = 20; // Minimum spacing between buttons
+            int maxAttempts = 50; // Avoid infinite loops if space is tight
+            int listSize = wiki.ArticlesList.Count > 10 ? wiki.ArticlesList.Count : 10;
+            List<Point> occupiedPositions = new List<Point>();
 
             foreach (Article article in wiki.ArticlesList)
             {
+                Point location;
+                int attempts = 0;
+                bool validPosition;
+
+                do
+                {
+                    // Generate a random position based on number of buttons
+                    location = new Point(rand.Next(50, panel1.Width * (listSize / 10) - buttonSize - 50),
+                                         rand.Next(50, panel1.Height * (listSize / 10) - buttonSize - 50));
+
+                    // Check if the new position is far enough from existing buttons
+                    validPosition = !occupiedPositions.Any(p =>
+                        Math.Abs(p.X - location.X) < buttonSize + padding &&
+                        Math.Abs(p.Y - location.Y) < buttonSize + padding);
+
+                    attempts++;
+                }
+                while (!validPosition && attempts < maxAttempts);
+
+                // Add button to the panel
                 Button button = new Button
                 {
                     Name = article.Title,
                     Text = article.Title,
-                    Size = new Size(75, 75),
-                    Location = new Point(rand.Next(50, 101) * i, rand.Next(50, 101) * i),
+                    Size = new Size(buttonSize, buttonSize),
+                    Location = location,
                     BackColor = SystemColors.ButtonHighlight
                 };
-                panel1.Controls.Add(button);
 
-                i += 2;
+                panel1.Controls.Add(button);
+                occupiedPositions.Add(location);
             }
 
             Console.WriteLine("Buttons added");
@@ -52,12 +80,8 @@ namespace Wikisplorer
             DrawLineBetweenButtons(e.Graphics);
         }
 
-        private void DrawLineBetweenButtons(Graphics g)
+        private void FillLinkedArticles()
         {
-            Console.WriteLine("Painting");
-            Dictionary<string, Button> articleButtons = new Dictionary<string, Button>();
-
-            // Store buttons in a dictionary for quick lookup
             foreach (Control control in panel1.Controls)
             {
                 if (control is Button button)
@@ -66,25 +90,45 @@ namespace Wikisplorer
                 }
             }
 
-
             // Find all links between articles
             foreach (Article article in wiki.ArticlesList)
             {
                 Button fromButton = articleButtons[article.Title]; // The source button
+                List<Button> linkedButtons = new List<Button>();
 
                 foreach (KeyValuePair<string, int> link in article.AnchorsCount)
                 {
-                    
-                    // Linked article exists in our dictionary of scraped articles
+
+                    // Link exists as an article we've scraped
                     if (articleButtons.TryGetValue(link.Key, out Button? toButton))
                     {
-                        Console.WriteLine($"{article.Title}, {link.Key}");
-                        // Get the center positions of both buttons
-                        Point fromPoint = new Point(fromButton.Left + fromButton.Width / 2, fromButton.Top + fromButton.Height / 2);
-                        Point toPoint = new Point(toButton.Left + toButton.Width / 2, toButton.Top + toButton.Height / 2);
-
-                        g.DrawLine(Pens.Black, fromPoint, toPoint);
+                        Console.WriteLine($"{article.Title} contains the article: {link.Key}");
+                        linkedButtons.Add(toButton);
                     }
+                }
+
+                // Add the final dictionary containing all buttons linked to the fromButton
+                linkedArticles.Add(fromButton, linkedButtons);
+            }
+        }
+
+        private void DrawLineBetweenButtons(Graphics g)
+        {
+            Console.WriteLine("Painting");
+
+            foreach (KeyValuePair<Button, List<Button>> Buttons in linkedArticles)
+            {
+                Button fromButton = Buttons.Key;
+                List<Button> toButtons = Buttons.Value;
+
+                foreach (Button toButton in toButtons)
+                {
+                    // Get the center positions of both buttons
+                    Point fromPoint = new Point(fromButton.Left + fromButton.Width / 2, fromButton.Top + fromButton.Height / 2);
+                    Point toPoint = new Point(toButton.Left + toButton.Width / 2, toButton.Top + toButton.Height / 2);
+
+                    Pen blackPen = new Pen(Color.FromArgb(255, 0, 0, 0), 2);
+                    g.DrawLine(blackPen, fromPoint, toPoint);
                 }
             }
         }
