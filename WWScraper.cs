@@ -14,7 +14,6 @@ namespace Wikisplorer
         public List<Article> ArticlesList
         {
             get { return articlesList; }
-            set { articlesList = value; }
         }
         public WWScraper()
         {

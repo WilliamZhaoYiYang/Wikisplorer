@@ -12,8 +12,9 @@ namespace Wikisplorer
         private WWScraper wiki;
         private Article lastArticle;
         private Random rand = new Random();
-        private Dictionary<Button, List<Button>> linkedArticles;
-        Dictionary<string, Button> articleButtons;   // Store buttons in a dictionary for quick lookup
+        private Dictionary<Button, List<Button>> linkedArticles; // Any links between scraped articles stored in dictionary
+        Dictionary<string, Button> articleButtons;   // buttons in dictionary for quick lookup
+        private List<Line> lines = new List<Line>();
 
         public Map(WWScraper Wiki, Article LastArticle)
         {
@@ -68,6 +69,10 @@ namespace Wikisplorer
                     BackColor = SystemColors.ButtonHighlight
                 };
 
+                // Event handlers for the created buttons
+                button.MouseEnter += Article_MouseEnter;
+                button.MouseLeave += Article_MouseLeave;
+
                 panel1.Controls.Add(button);
                 occupiedPositions.Add(location);
             }
@@ -98,12 +103,18 @@ namespace Wikisplorer
 
                 foreach (KeyValuePair<string, int> link in article.AnchorsCount)
                 {
-
                     // Link exists as an article we've scraped
                     if (articleButtons.TryGetValue(link.Key, out Button? toButton))
                     {
-                        Console.WriteLine($"{article.Title} contains the article: {link.Key}");
                         linkedButtons.Add(toButton);
+
+                        // Create a line between the buttons
+                        Point fromPoint = new Point(fromButton.Left + fromButton.Width / 2, fromButton.Top + fromButton.Height / 2);
+                        Point toPoint = new Point(toButton.Left + toButton.Width / 2, toButton.Top + toButton.Height / 2);
+
+                        // Create a line and add it to list for quick lookup
+                        Line line = new Line(fromPoint, toPoint, Color.Black);
+                        lines.Add(line);
                     }
                 }
 
@@ -114,22 +125,65 @@ namespace Wikisplorer
 
         private void DrawLineBetweenButtons(Graphics g)
         {
-            Console.WriteLine("Painting");
 
-            foreach (KeyValuePair<Button, List<Button>> Buttons in linkedArticles)
+            foreach (var line in lines)
             {
-                Button fromButton = Buttons.Key;
-                List<Button> toButtons = Buttons.Value;
-
-                foreach (Button toButton in toButtons)
+                // Use the line's current color
+                Console.WriteLine($"Line color: {line.Color}");
+                using (Pen pen = new Pen(line.Color, 2))
                 {
-                    // Get the center positions of both buttons
-                    Point fromPoint = new Point(fromButton.Left + fromButton.Width / 2, fromButton.Top + fromButton.Height / 2);
-                    Point toPoint = new Point(toButton.Left + toButton.Width / 2, toButton.Top + toButton.Height / 2);
-
-                    Pen blackPen = new Pen(Color.FromArgb(255, 0, 0, 0), 2);
-                    g.DrawLine(blackPen, fromPoint, toPoint);
+                    g.DrawLine(pen, line.Start, line.End);
                 }
+            }
+        }
+
+        private void RecolorLine(Point start, Point end, Color newColor)
+        {
+            // Find all lines with the specified start and end points
+            var linesToRecolor = lines.Where(line => line.Start == start && line.End == end).ToList();
+
+            // Recolor all matching lines
+            foreach (var line in linesToRecolor)
+            {
+                line.Color = newColor;
+            }
+        }
+
+        private void Article_MouseEnter(object? sender, EventArgs e)
+        {
+            if (sender is Button hoveredButton)
+            {
+                // Find all lines that starts at the hovered button
+                var connectedLines = lines.Where(line =>
+                    (line.Start == new Point(hoveredButton.Left + hoveredButton.Width / 2, hoveredButton.Top + hoveredButton.Height / 2)) ||
+                    (line.End == new Point(hoveredButton.Left + hoveredButton.Width / 2, hoveredButton.Top + hoveredButton.Height / 2))
+                ).ToList();
+
+                // Recolor lines to red
+                foreach (var line in connectedLines)
+                {
+                    RecolorLine(line.Start, line.End, Color.Red);
+                }
+                panel1.Refresh();
+            }
+        }
+
+        private void Article_MouseLeave(object? sender, EventArgs e)
+        {
+            if (sender is Button hoveredButton)
+            {
+                // Find all lines that starts at the hovered button
+                var connectedLines = lines.Where(line =>
+                    (line.Start == new Point(hoveredButton.Left + hoveredButton.Width / 2, hoveredButton.Top + hoveredButton.Height / 2)) ||
+                    (line.End == new Point(hoveredButton.Left + hoveredButton.Width / 2, hoveredButton.Top + hoveredButton.Height / 2))
+                ).ToList();
+
+                // Reset the connected lines to black
+                foreach (var line in connectedLines)
+                {
+                    RecolorLine(line.Start, line.End, Color.Black);
+                }
+                panel1.Refresh();
             }
         }
 
