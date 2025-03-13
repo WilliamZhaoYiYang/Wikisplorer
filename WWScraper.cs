@@ -9,35 +9,25 @@ namespace Wikisplorer
 {
     public class WWScraper
     {
-        private List<Article> articlesList;
+        private HashSet<Article> articlesSet;
 
-        public List<Article> ArticlesList
+        public HashSet<Article> ArticlesSet
         {
-            get { return articlesList; }
+            get { return articlesSet; }
         }
         public WWScraper()
         {
             Console.WriteLine("WWScraper created");
             // list for storing scraped articles
-            articlesList = new List<Article>();
+            articlesSet = new HashSet<Article>();
         }
 
         // Add article to WWScraper object
         public bool AddArticle(String link)
         {
-            try
-            {
-                // Create new article object and add it to list
-                Article article = new Article(link);
-                articlesList.Add(article);
-
-                return true;
-            }
-            catch (Exception )
-            {
-                // article does not exist
-                return false;
-            }
+            Article article = new Article(link);
+            bool isAdded = articlesSet.Add(article);
+            return isAdded;
         }
 
         // Print out string representation of article list
@@ -45,7 +35,7 @@ namespace Wikisplorer
         {
             int num = 0;
             StringBuilder returnStr = new StringBuilder();
-            foreach (var ar in articlesList)
+            foreach (var article in articlesSet)
             {
                 if (num == 0)
                 {
@@ -53,7 +43,7 @@ namespace Wikisplorer
                 }
 
                 num += 1;
-                returnStr.Append($"[{num}] {ar}\n");
+                returnStr.Append($"[{num}] {article}\n");
             }
 
             return returnStr.ToString();

@@ -14,13 +14,17 @@ namespace Wikisplorer
         private string title;
         private HtmlNode content;
         private string link;
-        // private List<HtmlAgilityPack.HtmlNode> paragraphs;
         private string fullText;
         Dictionary<string, int> anchorsCount;
 
         public string Title
         {
             get { return title; }
+        }
+
+        public string Link
+        {
+            get { return link; }
         }
 
         public Dictionary<string, int> AnchorsCount
@@ -54,11 +58,6 @@ namespace Wikisplorer
 
             fullText = LoadText(paragraphs);
             anchorsCount = CountAnchors(paragraphs, fullText);
-
-            //foreach (KeyValuePair<string, int> element in anchorsCount)
-            //{
-            //    Console.WriteLine("{0}: {1}\n", element.Key, element.Value);
-            //}
         }
 
         // Get title of article from link
@@ -97,10 +96,8 @@ namespace Wikisplorer
                 {
                     // Decode HTML entities in the anchor title and text
                     string linkTitle = HtmlAgilityPack.HtmlEntity.DeEntitize(anchor.GetAttributeValue("title", "null"));
-                    string linkText = HtmlAgilityPack.HtmlEntity.DeEntitize(anchor.InnerText).ToLower();
 
                     int titleCount = Regex.Matches(fullText, Regex.Escape(linkTitle.ToLower())).Count;
-                    // int textCount = Regex.Matches(fullText, Regex.Escape(linkText)).Count;
 
                     // Check if the key already exists
                     if (linksCount.ContainsKey(linkTitle))
@@ -112,7 +109,6 @@ namespace Wikisplorer
                         // COUNTRY MUSIC IN THE ARTICLE IS JUST REFFERED TO AS COUNTRY
                         // WHICH RESULTS IN A COUNT OF 43
                         // SO WE CANNOT COUNT LINK TEXT + TITLE
-                        //linksCount.Add(linkTitle, titleCount + (linkTitle == linkText ? 0 : textCount));
 
                         // In cases where the link finds zero matches
                         // We know the link appears at least once in the article
@@ -133,6 +129,23 @@ namespace Wikisplorer
         public override string ToString()
         {
             return $"Article: {Title} ({link})";
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            Article other = (Article)obj;
+            return Link == other.Link;
+        }
+
+        public override int GetHashCode()
+        {
+            // Combination of article title and link to generate its hash code
+            return (Link?.GetHashCode() ?? 0);
         }
     }
 }

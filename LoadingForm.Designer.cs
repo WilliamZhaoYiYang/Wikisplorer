@@ -60,7 +60,7 @@
             ClientSize = new Size(363, 289);
             Controls.Add(label1);
             Controls.Add(pictureBox1);
-            FormBorderStyle = FormBorderStyle.FixedDialog;
+            FormBorderStyle = FormBorderStyle.None;
             Name = "LoadingForm";
             ShowInTaskbar = false;
             StartPosition = FormStartPosition.CenterScreen;

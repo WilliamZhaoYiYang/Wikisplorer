@@ -35,10 +35,10 @@ namespace Wikisplorer
             int buttonSize = 75;
             int padding = 20; // Minimum spacing between buttons
             int maxAttempts = 50; // Avoid infinite loops if space is tight
-            int listSize = wiki.ArticlesList.Count > 10 ? wiki.ArticlesList.Count : 10;
+            int listSize = wiki.ArticlesSet.Count > 10 ? wiki.ArticlesSet.Count : 10;
             List<Point> occupiedPositions = new List<Point>();
 
-            foreach (Article article in wiki.ArticlesList)
+            foreach (Article article in wiki.ArticlesSet)
             {
                 Point location;
                 int attempts = 0;
@@ -87,6 +87,7 @@ namespace Wikisplorer
 
         private void FillLinkedArticles()
         {
+            // articleButtons for tracking buttons on map panel
             foreach (Control control in panel1.Controls)
             {
                 if (control is Button button)
@@ -95,8 +96,8 @@ namespace Wikisplorer
                 }
             }
 
-            // Find all links between articles
-            foreach (Article article in wiki.ArticlesList)
+            // Find all links between scraped articles
+            foreach (Article article in wiki.ArticlesSet)
             {
                 Button fromButton = articleButtons[article.Title]; // The source button
                 List<Button> linkedButtons = new List<Button>();
@@ -159,7 +160,6 @@ namespace Wikisplorer
                     (line.End == new Point(hoveredButton.Left + hoveredButton.Width / 2, hoveredButton.Top + hoveredButton.Height / 2))
                 ).ToList();
 
-                // Recolor lines to red
                 foreach (var line in connectedLines)
                 {
                     RecolorLine(line.Start, line.End, Color.Red);

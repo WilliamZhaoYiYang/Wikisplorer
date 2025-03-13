@@ -1,3 +1,10 @@
+// TODO
+// Add a refresh button to the map form so positions can be randomized again
+// On button hover, show basic info about article at the bottom of map
+// On button click, go to the wikipedia article
+// Add a save as JSON file so that previous generated maps can be loaded in
+// On hover over save as file button, describe what saving as JSON does
+
 using System.Media;
 using System.Text.RegularExpressions; 
 
@@ -101,12 +108,13 @@ namespace Wikisplorer
                 LoadingForm loadingForm = new LoadingForm();
                 loadingForm.Show();
                 loadingForm.Refresh();
+                DisableAllControls(this);
 
                 // Run web scraping in a separate thread to avoid blocking the UI
                 bool articleAdded = await Task.Run(() => wiki.AddArticle(link));
 
-                // Close loading form
                 loadingForm.Close();
+                EnableAllControls(this);
 
                 if (articleAdded)
                 {
@@ -118,7 +126,7 @@ namespace Wikisplorer
                         System.Drawing.Color.Green,
                         false);
 
-                    lastArticle = wiki.ArticlesList.Last();
+                    lastArticle = wiki.ArticlesSet.Last();
                     DisplayTitle();
                     DisplayLinks(lastArticle.AnchorsCount);
                 }
@@ -127,7 +135,7 @@ namespace Wikisplorer
                     // article not found
                     this.ActiveControl = null;
                     textBox1_SetText(
-                        "Article does not exist",
+                        "Article does not exist or has already been scraped",
                         new Font(textBox1.Font, FontStyle.Bold),
                         System.Drawing.Color.Red,
                         true);
@@ -171,7 +179,7 @@ namespace Wikisplorer
         // To sort by ascending, we'd reverse the order of the original anchorsCount
         private Dictionary<string, int> SortLinks()
         {
-            Dictionary<string, int> sortedDict = null;
+            Dictionary<string, int>? sortedDict = null;
 
             if (comboBox1.SelectedIndex == 0) // Sort by order of appearance
             {
@@ -256,7 +264,7 @@ namespace Wikisplorer
         // Generate map
         private void button2_Click(object sender, EventArgs e)
         {
-            if (wiki.ArticlesList.Count() > 0)
+            if (wiki.ArticlesSet.Count() > 0)
             {
                 map = new Map(wiki, lastArticle);
                 map.Show();
@@ -267,6 +275,30 @@ namespace Wikisplorer
                 new Font(textBox1.Font, FontStyle.Bold),
                 System.Drawing.Color.Red,
                 true);
+            }
+        }
+
+        private void DisableAllControls(Control parentControl)
+        {
+            foreach (Control control in parentControl.Controls)
+            {
+                control.Enabled = false;
+                if (control.HasChildren)
+                {
+                    DisableAllControls(control);
+                }
+            }
+        }
+
+        private void EnableAllControls(Control parentControl)
+        {
+            foreach (Control control in parentControl.Controls)
+            {
+                control.Enabled = true;
+                if (control.HasChildren)
+                {
+                    DisableAllControls(control);
+                }
             }
         }
     }
