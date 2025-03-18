@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Wikisplorer")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e1ca3d0c3268c6892a6853ea733d119810afd85f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c075582987361ef7ac6b95ef9b3a3ed4866b3ab0")]
 [assembly: System.Reflection.AssemblyProductAttribute("Wikisplorer")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Wikisplorer")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -31,12 +31,14 @@
             panel2 = new Panel();
             saveButton = new Button();
             panel1 = new Panel();
+            refreshButton = new Button();
             panel2.SuspendLayout();
             SuspendLayout();
             // 
             // panel2
             // 
             panel2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            panel2.Controls.Add(refreshButton);
             panel2.Controls.Add(saveButton);
             panel2.Controls.Add(panel1);
             panel2.Location = new Point(0, -1);
@@ -66,6 +68,17 @@
             panel1.Size = new Size(954, 479);
             panel1.TabIndex = 1;
             // 
+            // refreshButton
+            // 
+            refreshButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            refreshButton.Location = new Point(125, 498);
+            refreshButton.Name = "refreshButton";
+            refreshButton.Size = new Size(93, 34);
+            refreshButton.TabIndex = 4;
+            refreshButton.Text = "Refresh";
+            refreshButton.UseVisualStyleBackColor = true;
+            refreshButton.Click += refreshButton_Click;
+            // 
             // Map
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -84,5 +97,6 @@
         private Panel panel2;
         private Button saveButton;
         private Panel panel1;
+        private Button refreshButton;
     }
 }

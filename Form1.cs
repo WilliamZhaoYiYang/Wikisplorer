@@ -1,7 +1,4 @@
 // TODO
-// Add a refresh button to the map form so positions can be randomized again
-// On button hover, show basic info about article at the bottom of map
-// On button click, go to the wikipedia article
 // Add a save as JSON file so that previous generated maps can be loaded in
 // On hover over save as file button, describe what saving as JSON does
 

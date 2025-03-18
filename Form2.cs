@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
@@ -70,14 +71,13 @@ namespace Wikisplorer
                 };
 
                 // Event handlers for the created buttons
-                button.MouseEnter += Article_MouseEnter;
-                button.MouseLeave += Article_MouseLeave;
+                button.MouseEnter += articleButton_MouseEnter;
+                button.MouseLeave += articleButton_MouseLeave;
+                button.MouseClick += articleButton_Click;
 
                 panel1.Controls.Add(button);
                 occupiedPositions.Add(location);
             }
-
-            Console.WriteLine("Buttons added");
         }
 
         private void Panel1_Paint(object? sender, PaintEventArgs e)
@@ -130,7 +130,6 @@ namespace Wikisplorer
             foreach (var line in lines)
             {
                 // Use the line's current color
-                Console.WriteLine($"Line color: {line.Color}");
                 using (Pen pen = new Pen(line.Color, 2))
                 {
                     g.DrawLine(pen, line.Start, line.End);
@@ -150,11 +149,11 @@ namespace Wikisplorer
             }
         }
 
-        private void Article_MouseEnter(object? sender, EventArgs e)
+        private void articleButton_MouseEnter(object? sender, EventArgs e)
         {
             if (sender is Button hoveredButton)
             {
-                // Find all lines that starts at the hovered button
+                // Highlights all connections between article buttons
                 var connectedLines = lines.Where(line =>
                     (line.Start == new Point(hoveredButton.Left + hoveredButton.Width / 2, hoveredButton.Top + hoveredButton.Height / 2)) ||
                     (line.End == new Point(hoveredButton.Left + hoveredButton.Width / 2, hoveredButton.Top + hoveredButton.Height / 2))
@@ -168,7 +167,8 @@ namespace Wikisplorer
             }
         }
 
-        private void Article_MouseLeave(object? sender, EventArgs e)
+        // Unhighlight on mouse leave
+        private void articleButton_MouseLeave(object? sender, EventArgs e)
         {
             if (sender is Button hoveredButton)
             {
@@ -187,6 +187,36 @@ namespace Wikisplorer
             }
         }
 
+        // On click, open the wikipedia article
+        private void articleButton_Click(object? sender, EventArgs e)
+        {
+            if (sender is Button clickedButton)
+            {
+                string titleURL = clickedButton.Name.Replace(" ", "_");
+                string target = "https://en.wikipedia.org/wiki/" + titleURL;
+
+                try
+                {
+                    ProcessStartInfo psInfo = new ProcessStartInfo
+                    {
+                        FileName = target,
+                        UseShellExecute = true
+                    };
+                    Process.Start(psInfo);
+                }
+                catch (System.ComponentModel.Win32Exception noBrowser)
+                {
+                    if (noBrowser.ErrorCode == -2147467259)
+                        MessageBox.Show(noBrowser.Message);
+                }
+                catch (System.Exception other)
+                {
+                    MessageBox.Show(other.Message);
+                }
+            }
+        }
+
+        // Capture the map as an image
         private void saveButton_Click(object sender, EventArgs e)
         {
             panel1.AutoScrollPosition = new Point(0, 0);
@@ -216,6 +246,19 @@ namespace Wikisplorer
 
             // Reset AutoSize
             panel1.AutoSize = false;
+            panel1.Refresh();
+        }
+
+        private void refreshButton_Click(object sender, EventArgs e)
+        {
+            panel1.Controls.Clear();
+            linkedArticles.Clear();
+            lines.Clear();
+
+            // Reinitialize
+            InitializeButtons();
+            FillLinkedArticles();
+
             panel1.Refresh();
         }
     }

@@ -43,7 +43,7 @@ namespace Wikisplorer
                 throw new Exception("Article does not exist.");
             }
 
-            // Continue if article exists
+            // Continue scraping if article exists
             link = url;
             title = ExtractTitle(url);
 
