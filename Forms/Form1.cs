@@ -3,7 +3,9 @@
 // On hover over save as file button, describe what saving as JSON does
 
 using System.Media;
-using System.Text.RegularExpressions; 
+using System.Text.RegularExpressions;
+using Wikisplorer.Models;
+using Wikisplorer.Utilities;
 
 namespace Wikisplorer
 {

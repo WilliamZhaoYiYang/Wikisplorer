@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Wikisplorer.Models;
 using static System.Windows.Forms.LinkLabel;
 
-namespace Wikisplorer
+namespace Wikisplorer.Utilities
 {
     public class WWScraper
     {
@@ -23,7 +24,7 @@ namespace Wikisplorer
         }
 
         // Add article to WWScraper object
-        public bool AddArticle(String link)
+        public bool AddArticle(string link)
         {
             Article article = new Article(link);
             bool isAdded = articlesSet.Add(article);

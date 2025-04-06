@@ -1,3 +1,4 @@
+using Wikisplorer.Utilities;
 using static System.Windows.Forms.LinkLabel;
 
 namespace Wikisplorer

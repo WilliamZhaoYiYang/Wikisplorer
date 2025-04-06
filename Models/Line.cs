@@ -1,4 +1,4 @@
-﻿namespace Wikisplorer
+﻿namespace Wikisplorer.Models
 {
     public class Line
     {

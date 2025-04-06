@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using HtmlAgilityPack;
 using HtmlNode = HtmlAgilityPack.HtmlNode;
 
-namespace Wikisplorer
+namespace Wikisplorer.Models
 {
     public class Article
     {
@@ -67,14 +67,14 @@ namespace Wikisplorer
         }
 
         // Returns a string of the article text
-        static string LoadText(List<HtmlAgilityPack.HtmlNode> paragraphs)
+        static string LoadText(List<HtmlNode> paragraphs)
         {
             List<string> listText = new List<string>();
 
             foreach (var paragraph in paragraphs)
             {
                 // Decode HTML entities in the inner text
-                string decodedText = HtmlAgilityPack.HtmlEntity.DeEntitize(paragraph.InnerText);
+                string decodedText = HtmlEntity.DeEntitize(paragraph.InnerText);
                 listText.Add(decodedText);
             }
 
@@ -84,7 +84,7 @@ namespace Wikisplorer
         // Return a dictionary where
         // the key is the title of the linked topic
         // and the value is the number of times the title of the linked topic appears in the article
-        static Dictionary<string, int> CountAnchors(List<HtmlAgilityPack.HtmlNode> paragraphs, string fullText)
+        static Dictionary<string, int> CountAnchors(List<HtmlNode> paragraphs, string fullText)
         {
             Dictionary<string, int> linksCount = new Dictionary<string, int>();
 
@@ -95,7 +95,7 @@ namespace Wikisplorer
                 foreach (var anchor in anchorTags)
                 {
                     // Decode HTML entities in the anchor title and text
-                    string linkTitle = HtmlAgilityPack.HtmlEntity.DeEntitize(anchor.GetAttributeValue("title", "null"));
+                    string linkTitle = HtmlEntity.DeEntitize(anchor.GetAttributeValue("title", "null"));
 
                     int titleCount = Regex.Matches(fullText, Regex.Escape(linkTitle.ToLower())).Count;
 
@@ -145,7 +145,7 @@ namespace Wikisplorer
         public override int GetHashCode()
         {
             // Combination of article title and link to generate its hash code
-            return (Link?.GetHashCode() ?? 0);
+            return Link?.GetHashCode() ?? 0;
         }
     }
 }
