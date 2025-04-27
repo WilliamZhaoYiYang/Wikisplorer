@@ -1,10 +1,11 @@
 ﻿using System;
+using System.IO;
+using System.Text;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 using Wikisplorer.Models;
-using Wikisplorer.Utilities;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Button = System.Windows.Forms.Button;
 
@@ -18,6 +19,12 @@ namespace Wikisplorer
         private Dictionary<Button, List<Button>> linkedArticles; // Any links between scraped articles stored in dictionary
         Dictionary<string, Button> articleButtons;   // buttons in dictionary for quick lookup
         private List<Line> lines = new List<Line>();
+
+        public event EventHandler MapCleared;
+        protected virtual void OnMapCleared()
+        {
+            MapCleared?.Invoke(this, EventArgs.Empty);
+        }
 
         public Map(WWScraper Wiki, Article LastArticle)
         {
@@ -263,5 +270,172 @@ namespace Wikisplorer
 
             panel1.Refresh();
         }
+
+        private void saveToJSON_Click(object sender, EventArgs e)
+        {
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+            {
+                saveFileDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
+                saveFileDialog.Title = "Save as JSON file";
+                saveFileDialog.FileName = $"Wiki_Map_JSON_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.json";
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        // Create an object with the data we want to save
+                        var dataToSave = new
+                        {
+                            Articles = wiki.ArticlesSet.Select(a => new
+                            {
+                                Title = a.Title,
+                                Link = a.Link,
+                                Anchors = a.AnchorsCount
+                            }).ToList(),
+                            Connections = lines.Select(l => new
+                            {
+                                From = GetButtonAtPoint(l.Start)?.Name,
+                                To = GetButtonAtPoint(l.End)?.Name
+                            }).Where(c => c.From != null && c.To != null).ToList()
+                        };
+
+                        // Serialize to JSON
+                        var options = new System.Text.Json.JsonSerializerOptions
+                        {
+                            WriteIndented = true
+                        };
+                        string json = System.Text.Json.JsonSerializer.Serialize(dataToSave, options);
+
+                        // Write to file
+                        File.WriteAllText(saveFileDialog.FileName, json);
+
+                        MessageBox.Show($"JSON file saved to {saveFileDialog.FileName}");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error saving JSON file: {ex.Message}");
+                    }
+                }
+            }
+        }
+
+        private void loadAsJSON_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
+                openFileDialog.Title = "Load JSON file";
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        // Read JSON file
+                        string json = File.ReadAllText(openFileDialog.FileName);
+
+                        // Deserialize JSON
+                        var options = new System.Text.Json.JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true
+                        };
+
+                        var loadedData = System.Text.Json.JsonSerializer.Deserialize<WikiMapData>(json, options);
+
+                        panel1.Controls.Clear();
+                        linkedArticles.Clear();
+                        articleButtons.Clear();
+                        lines.Clear();
+                        wiki.ArticlesSet.Clear();
+
+                        // Notify Form1 to clear its controls
+                        OnMapCleared();
+
+                        // Recreate articles
+                        foreach (var articleData in loadedData.Articles)
+                        {
+                            try
+                            {
+                                var article = new Article(articleData.Link);
+                                wiki.ArticlesSet.Add(article);
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show($"Failed to load article {articleData.Title}: {ex.Message}");
+                            }
+                        }
+
+                        InitializeButtons();
+
+                        foreach (var connection in loadedData.Connections)
+                        {
+                            if (articleButtons.TryGetValue(connection.From, out var fromButton) &&
+                                articleButtons.TryGetValue(connection.To, out var toButton))
+                            {
+                                Point fromPoint = new Point(
+                                    fromButton.Left + fromButton.Width / 2,
+                                    fromButton.Top + fromButton.Height / 2);
+                                Point toPoint = new Point(
+                                    toButton.Left + toButton.Width / 2,
+                                    toButton.Top + toButton.Height / 2);
+
+                                lines.Add(new Line(fromPoint, toPoint, Color.Black));
+                            }
+                        }
+
+                        // Rebuild the linkedArticles dictionary
+                        linkedArticles.Clear();
+                        FillLinkedArticles();
+
+                        panel1.Refresh();
+                        MessageBox.Show("Map loaded successfully!");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error loading JSON file: {ex.Message}");
+                    }
+                }
+            }
+        }
+
+        // Find a button at a given center point
+        private Button GetButtonAtPoint(Point centerPoint)
+        {
+            foreach (Control control in panel1.Controls)
+            {
+                if (control is Button button)
+                {
+                    // Calculate button's center point
+                    Point buttonCenter = new Point(
+                        button.Left + button.Width / 2,
+                        button.Top + button.Height / 2);
+
+                    if (buttonCenter == centerPoint)
+                    {
+                        return button;
+                    }
+                }
+            }
+            return null;
+        }
+    }
+
+    // Hold deserialized data for loading JSON files
+    public class WikiMapData
+    {
+        public List<ArticleData> Articles { get; set; }
+        public List<ConnectionData> Connections { get; set; }
+    }
+
+    public class ArticleData
+    {
+        public string Title { get; set; }
+        public string Link { get; set; }
+        public Dictionary<string, int> Anchors { get; set; }
+    }
+
+    public class ConnectionData
+    {
+        public string From { get; set; }
+        public string To { get; set; }
     }
 }

@@ -1,11 +1,13 @@
 // TODO
+// Ensure puncutation is displayed correctly i.e: https://en.wikipedia.org/wiki/2022%E2%80%932023_Pentagon_document_leaks
+    // including in form1 when displaying last entered article
+// Remove headings from links (anything after # in a link)
 // Add a save as JSON file so that previous generated maps can be loaded in
-// On hover over save as file button, describe what saving as JSON does
+    // Add a load json file button to form1 to load maps
 
 using System.Media;
 using System.Text.RegularExpressions;
 using Wikisplorer.Models;
-using Wikisplorer.Utilities;
 
 namespace Wikisplorer
 {
@@ -266,14 +268,25 @@ namespace Wikisplorer
             if (wiki.ArticlesSet.Count() > 0)
             {
                 map = new Map(wiki, lastArticle);
+                map.MapCleared += (s, args) =>
+                {
+                    textBox2.Text = "";
+                    label2.Text = "Last entered article:";
+                    textBox1_SetText(
+                        "Enter a Wikipedia link",
+                        new Font(textBox1.Font, FontStyle.Italic),
+                        System.Drawing.Color.Gray,
+                        false);
+                };
                 map.Show();
-            } else
+            }
+            else
             {
                 textBox1_SetText(
-                "No articles entered to generate a map from",
-                new Font(textBox1.Font, FontStyle.Bold),
-                System.Drawing.Color.Red,
-                true);
+                    "No articles entered to generate a map from",
+                    new Font(textBox1.Font, FontStyle.Bold),
+                    System.Drawing.Color.Red,
+                    true);
             }
         }
 
@@ -302,5 +315,3 @@ namespace Wikisplorer
         }
     }
 }
-
-// https://en.wikipedia.org/wiki/New_Zealand

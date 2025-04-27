@@ -6,7 +6,6 @@ D:\Programming\Apps\Wikisplorer\bin\Debug\net8.0-windows\Wikisplorer.pdb
 D:\Programming\Apps\Wikisplorer\bin\Debug\net8.0-windows\HtmlAgilityPack.dll
 D:\Programming\Apps\Wikisplorer\obj\Debug\net8.0-windows\Wikisplorer.csproj.AssemblyReference.cache
 D:\Programming\Apps\Wikisplorer\obj\Debug\net8.0-windows\Wikisplorer.Form1.resources
-D:\Programming\Apps\Wikisplorer\obj\Debug\net8.0-windows\Wikisplorer.Map.resources
 D:\Programming\Apps\Wikisplorer\obj\Debug\net8.0-windows\Wikisplorer.LoadingForm.resources
 D:\Programming\Apps\Wikisplorer\obj\Debug\net8.0-windows\Wikisplorer.Properties.Resources.resources
 D:\Programming\Apps\Wikisplorer\obj\Debug\net8.0-windows\Wikisplorer.csproj.GenerateResource.cache
@@ -21,3 +20,4 @@ D:\Programming\Apps\Wikisplorer\obj\Debug\net8.0-windows\refint\Wikisplorer.dll
 D:\Programming\Apps\Wikisplorer\obj\Debug\net8.0-windows\Wikisplorer.pdb
 D:\Programming\Apps\Wikisplorer\obj\Debug\net8.0-windows\Wikisplorer.genruntimeconfig.cache
 D:\Programming\Apps\Wikisplorer\obj\Debug\net8.0-windows\ref\Wikisplorer.dll
+D:\Programming\Apps\Wikisplorer\obj\Debug\net8.0-windows\Wikisplorer.Map.resources

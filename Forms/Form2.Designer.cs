@@ -29,15 +29,19 @@
         private void InitializeComponent()
         {
             panel2 = new Panel();
+            saveToJSON = new Button();
+            refreshButton = new Button();
             saveButton = new Button();
             panel1 = new Panel();
-            refreshButton = new Button();
+            loadAsJSON = new Button();
             panel2.SuspendLayout();
             SuspendLayout();
             // 
             // panel2
             // 
             panel2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            panel2.Controls.Add(loadAsJSON);
+            panel2.Controls.Add(saveToJSON);
             panel2.Controls.Add(refreshButton);
             panel2.Controls.Add(saveButton);
             panel2.Controls.Add(panel1);
@@ -45,6 +49,28 @@
             panel2.Name = "panel2";
             panel2.Size = new Size(979, 546);
             panel2.TabIndex = 3;
+            // 
+            // saveToJSON
+            // 
+            saveToJSON.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            saveToJSON.Location = new Point(740, 498);
+            saveToJSON.Name = "saveToJSON";
+            saveToJSON.Size = new Size(110, 34);
+            saveToJSON.TabIndex = 5;
+            saveToJSON.Text = "Save as JSON file";
+            saveToJSON.UseVisualStyleBackColor = true;
+            saveToJSON.Click += saveToJSON_Click;
+            // 
+            // refreshButton
+            // 
+            refreshButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            refreshButton.Location = new Point(125, 498);
+            refreshButton.Name = "refreshButton";
+            refreshButton.Size = new Size(93, 34);
+            refreshButton.TabIndex = 4;
+            refreshButton.Text = "Refresh";
+            refreshButton.UseVisualStyleBackColor = true;
+            refreshButton.Click += refreshButton_Click;
             // 
             // saveButton
             // 
@@ -68,16 +94,16 @@
             panel1.Size = new Size(954, 479);
             panel1.TabIndex = 1;
             // 
-            // refreshButton
+            // loadAsJSON
             // 
-            refreshButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            refreshButton.Location = new Point(125, 498);
-            refreshButton.Name = "refreshButton";
-            refreshButton.Size = new Size(93, 34);
-            refreshButton.TabIndex = 4;
-            refreshButton.Text = "Refresh";
-            refreshButton.UseVisualStyleBackColor = true;
-            refreshButton.Click += refreshButton_Click;
+            loadAsJSON.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            loadAsJSON.Location = new Point(856, 498);
+            loadAsJSON.Name = "loadAsJSON";
+            loadAsJSON.Size = new Size(110, 34);
+            loadAsJSON.TabIndex = 6;
+            loadAsJSON.Text = "Load a JSON file";
+            loadAsJSON.UseVisualStyleBackColor = true;
+            loadAsJSON.Click += loadAsJSON_Click;
             // 
             // Map
             // 
@@ -98,5 +124,7 @@
         private Button saveButton;
         private Panel panel1;
         private Button refreshButton;
+        private Button saveToJSON;
+        private Button loadAsJSON;
     }
 }

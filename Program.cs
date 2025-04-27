@@ -1,4 +1,4 @@
-using Wikisplorer.Utilities;
+using Wikisplorer.Models;
 using static System.Windows.Forms.LinkLabel;
 
 namespace Wikisplorer
@@ -15,14 +15,14 @@ namespace Wikisplorer
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
 
-            WWScraper wiki = new WWScraper();
-            wiki.AddArticle("https://en.wikipedia.org/wiki/New_Zealand");
-            wiki.AddArticle("https://en.wikipedia.org/wiki/Australia");
-            wiki.AddArticle("https://en.wikipedia.org/wiki/United_States");
-            wiki.AddArticle("https://en.wikipedia.org/wiki/G20");
+            //WWScraper wiki = new WWScraper();
+            //wiki.AddArticle("https://en.wikipedia.org/wiki/New_Zealand");
+            //wiki.AddArticle("https://en.wikipedia.org/wiki/Australia");
+            //wiki.AddArticle("https://en.wikipedia.org/wiki/United_States");
+            //wiki.AddArticle("https://en.wikipedia.org/wiki/G20");
 
-            Application.Run(new Map(wiki, wiki.ArticlesSet.Last()));
-            //Application.Run(new Form1());
+            //Application.Run(new Map(wiki, wiki.ArticlesSet.Last()));
+            Application.Run(new Form1());
         }
     }
 }

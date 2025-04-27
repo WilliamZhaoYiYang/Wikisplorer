@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Wikisplorer.Models;
 using static System.Windows.Forms.LinkLabel;
 
-namespace Wikisplorer.Utilities
+namespace Wikisplorer.Models
 {
     public class WWScraper
     {
